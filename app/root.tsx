@@ -9,6 +9,9 @@ import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 import Navbar from "./components/Navbar";
+import { CartContext, useCartContext } from "./hooks/use-cart-context";
+import { useCartReducer } from "./hooks/use-cart-reducer";
+import { useEffect } from "react";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -45,5 +48,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const cartReducer = useCartReducer();
+
+  useEffect(() => {
+    console.log(cartReducer.state);
+  }, [cartReducer.state]);
+
+  return (
+    <CartContext.Provider value={{ items: 0, reducer: cartReducer }}>
+      <Outlet />
+    </CartContext.Provider>
+  );
 }
