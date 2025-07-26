@@ -21,7 +21,7 @@ const navigation: Navigation[] = [
 
 export default function Navbar() {
   return (
-    <nav className="flex justify-between bg-white p-4 dark:bg-black border dark:text-white">
+    <nav className="fixed w-full flex justify-between bg-white p-4 dark:bg-black border dark:text-white">
       <h1 className="uppercase font-bold">The Online Store</h1>
       <ul className="flex gap-4">
         {navigation.map((nav, index) => (
