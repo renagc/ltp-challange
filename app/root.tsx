@@ -4,12 +4,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 import Navbar from "./components/Navbar";
-import { CartContext, useCartContext } from "./hooks/use-cart-context";
+import { CartContext } from "./hooks/use-cart-context";
 import { useCartReducer } from "./hooks/use-cart-reducer";
 import { useEffect } from "react";
 
@@ -36,10 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <div className="flex flex-col min-h-screen h-full">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-        </div>
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -47,16 +45,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function clientLoader() {
+  const data = localStorage.getItem("cart");
+  return data ? JSON.parse(data) : [];
+}
+
 export default function App() {
-  const cartReducer = useCartReducer();
+  const cartData = useLoaderData<typeof clientLoader>();
+  const cartReducer = useCartReducer(cartData);
 
   useEffect(() => {
-    console.log(cartReducer.state);
+    localStorage.setItem("cart", JSON.stringify(cartReducer.state));
   }, [cartReducer.state]);
 
   return (
     <CartContext.Provider value={{ items: 0, reducer: cartReducer }}>
-      <Outlet />
+      <div className="flex flex-col min-h-screen h-full">
+        <Navbar />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+      </div>
     </CartContext.Provider>
   );
 }

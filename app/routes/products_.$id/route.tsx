@@ -5,8 +5,8 @@ import {
 } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { type Product } from "~/types/product";
-import { type ImgHTMLAttributes } from "react";
 import { useCartContext } from "~/hooks/use-cart-context";
+import { ProductImage } from "~/components/ProductImage";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const id = params.id;
@@ -16,14 +16,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Failed to fetch product", { status: 500 });
   const product: Product = await response.json();
   return product;
-}
-
-function ProductImage(props: ImgHTMLAttributes<HTMLImageElement>) {
-  return (
-    <div className="max-h-screen h-full w-full bg-gray-200 aspect-square grid place-items-center">
-      <img alt="" className="w-2/3" {...props} />
-    </div>
-  );
 }
 
 export default function ProductDetail() {
