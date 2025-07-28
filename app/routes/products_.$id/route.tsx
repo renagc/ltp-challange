@@ -5,7 +5,8 @@ import {
 } from "@remix-run/react";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { type Product } from "~/types/product";
-import { type ImgHTMLAttributes } from "react";
+import { useCartContext } from "~/hooks/use-cart-context";
+import { ProductImage } from "~/components/ProductImage";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const id = params.id;
@@ -17,16 +18,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return product;
 }
 
-function ProductImage(props: ImgHTMLAttributes<HTMLImageElement>) {
-  return (
-    <div className="max-h-screen h-full w-full bg-gray-200 aspect-square grid place-items-center">
-      <img alt="" className="w-2/3" {...props} />
-    </div>
-  );
-}
-
 export default function ProductDetail() {
   const product = useLoaderData<Product>();
+  const { reducer } = useCartContext();
 
   return (
     <div className="p-4">
@@ -43,7 +37,10 @@ export default function ProductDetail() {
               <h2 className="text-sm md:text-xl">{product.price} €</h2>
             </div>
             <hr className="border-[0,5px] border-black my-4 w-full h-px hidden md:block" />
-            <button className="border border-black w-full py-2 font-light text-xs uppercase">
+            <button
+              className="border border-black w-full py-2 font-light text-xs uppercase"
+              onClick={() => reducer.addProduct(product)}
+            >
               add
             </button>
           </div>

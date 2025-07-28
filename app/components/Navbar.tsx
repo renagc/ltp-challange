@@ -1,4 +1,6 @@
-import { NavLink } from "@remix-run/react";
+import { NavLink, Link } from "@remix-run/react";
+import { useCartContext } from "~/hooks/use-cart-context";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 type Navigation = {
   name: string;
@@ -20,6 +22,7 @@ const navigation: Navigation[] = [
 ];
 
 export default function Navbar() {
+  const { reducer } = useCartContext();
   return (
     <nav className="fixed w-full flex justify-between bg-white p-4 dark:bg-black border dark:text-white">
       <h1 className="uppercase font-bold">The Online Store</h1>
@@ -35,7 +38,14 @@ export default function Navbar() {
           </li>
         ))}
       </ul>
-      <button>cart</button>
+      <Link to="/cart" className="relative">
+        <ShoppingCartIcon className="size-6" />
+        {reducer.state.length !== 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-500 rounded-full text-white text-xs px-2 py-0.5">
+            {reducer.state.length}
+          </span>
+        )}
+      </Link>
     </nav>
   );
 }
