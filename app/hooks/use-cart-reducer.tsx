@@ -7,10 +7,12 @@ type CartItem = {
   quantity: number;
 };
 
-type Action = {
-  type: string;
-  payload: Product;
-};
+type Action =
+  | {
+      type: string;
+      payload: Product;
+    }
+  | { type: "CLEAR" };
 
 export const cartReducer = (state: CartItem[], action: Action) => {
   switch (action.type) {
@@ -30,6 +32,18 @@ export const cartReducer = (state: CartItem[], action: Action) => {
           quantity: 1,
         },
       ];
+    case "DECREMENT":
+      return state
+        .map((cartItem) =>
+          cartItem.id === action.payload.id
+            ? { ...cartItem, quantity: cartItem.quantity - 1 }
+            : cartItem
+        )
+        .filter((cartItem) => cartItem.quantity > 0);
+    case "REMOVE":
+      return state.filter((cartItem) => cartItem.id !== action.payload.id);
+    case "CLEAR":
+      return [];
     default:
       return state;
   }
@@ -42,5 +56,10 @@ export function useCartReducer(initialCart: CartItem[] = []) {
     state,
     addProduct: (product: Product) =>
       dispatch({ type: "ADD", payload: product }),
+    decrementProduct: (product: Product) =>
+      dispatch({ type: "DECREMENT", payload: product }),
+    removeProduct: (product: Product) =>
+      dispatch({ type: "REMOVE", payload: product }),
+    clearCart: () => dispatch({ type: "CLEAR" }),
   };
 }

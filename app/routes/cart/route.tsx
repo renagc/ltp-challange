@@ -34,7 +34,11 @@ export default function Cart() {
                 </div>
                 <div className="flex gap-4">
                   <div className="flex gap-4 items-center border border-black rounded-lg px-3 py-1 font-light">
-                    <button>-</button>
+                    <button
+                      onClick={() => reducer.decrementProduct(cartItem.product)}
+                    >
+                      -
+                    </button>
                     <h3 className="text-xs">{cartItem.quantity}</h3>
                     <button
                       onClick={() => reducer.addProduct(cartItem.product)}
@@ -42,7 +46,9 @@ export default function Cart() {
                       +
                     </button>
                   </div>
-                  <button>
+                  <button
+                    onClick={() => reducer.removeProduct(cartItem.product)}
+                  >
                     <TrashIcon className="size-5" />
                   </button>
                 </div>
