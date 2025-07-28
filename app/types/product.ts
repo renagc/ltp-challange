@@ -44,4 +44,10 @@ type Product = {
   images: string[];
 };
 
-export { type Product };
+type Category = {
+  slug: string;
+  name: string;
+  url: string;
+};
+
+export { type Product, type Category };
