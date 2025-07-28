@@ -1,18 +1,24 @@
-import { type Product } from "~/types/product";
+import { Category, type Product } from "~/types/product";
 import { useLoaderData, Link } from "@remix-run/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Pagination } from "./pagination";
 
 export async function loader() {
-  const response = await fetch("https://dummyjson.com/products");
-  if (!response.ok) return null;
-  const data = await response.json();
-  return data.products;
+  const products = await fetch("https://dummyjson.com/products");
+  if (!products.ok) return null;
+
+  const categories = await fetch("https://dummyjson.com/products/categories");
+  const data = await products.json();
+  return { products: data.products, categories: await categories.json() };
 }
 
 export default function Products() {
-  const products = useLoaderData<Product[]>();
+  const { products, categories } = useLoaderData<{
+    products: Product[];
+    categories: Category[];
+  }>();
   const [sortField, setSortField] = useState<string | undefined>(undefined);
+  const [filterCategory, setFilterCategory] = useState<string[]>([]);
   const pageSize = 10;
   const totalPages = products.length / pageSize;
   const [page, setPage] = useState<number>(0);
@@ -34,6 +40,14 @@ export default function Products() {
     }
   };
 
+  const handleMultiple = (category: string) => {
+    if (filterCategory.includes(category)) {
+      setFilterCategory(filterCategory.filter((c) => c !== category));
+    } else {
+      setFilterCategory([...filterCategory, category]);
+    }
+  };
+
   return (
     <section className="pt-20 p-4 space-y-4 mx-auto max-w-screen-2xl">
       <h2 className="font-bold">Product List</h2>
@@ -50,9 +64,29 @@ export default function Products() {
         <option value="p-asc">Price ▲</option>
         <option value="p-desc">Price ▼</option>
       </select>
+      <div className="flex flex-wrap gap-2">
+        {categories.map((category, index) => (
+          <label
+            key={index}
+            className="flex items-center gap-1 border px-2 py-1 rounded cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              checked={filterCategory.includes(category.slug)}
+              onChange={() => handleMultiple(category.slug)}
+            />
+            {category.name}
+          </label>
+        ))}
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {products
           .sort(sorting)
+          .filter((product) =>
+            filterCategory.length === 0
+              ? true
+              : filterCategory.includes(product.category)
+          )
           .slice(page * pageSize, pageSize * (page + 1))
           .map((product: Product, index: number) => (
             <Link
