@@ -1,7 +1,7 @@
 import { type Product } from "~/types/product";
 import { useLoaderData, Link } from "@remix-run/react";
 import { ChangeEvent, useState } from "react";
-import { ArrowLongUpIcon } from "@heroicons/react/24/outline";
+import { Pagination } from "./pagination";
 
 export async function loader() {
   const response = await fetch("https://dummyjson.com/products");
@@ -13,6 +13,11 @@ export async function loader() {
 export default function Products() {
   const products = useLoaderData<Product[]>();
   const [sortField, setSortField] = useState<string | undefined>(undefined);
+  const pageSize = 10;
+  const totalPages = products.length / pageSize;
+  const [page, setPage] = useState<number>(0);
+
+  console.log(products.length);
 
   const sorting = (a: Product, b: Product) => {
     switch (sortField) {
@@ -46,40 +51,48 @@ export default function Products() {
         <option value="p-desc">Price ▼</option>
       </select>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {products.sort(sorting).map((product: Product, index: number) => (
-          <Link
-            key={index}
-            to={`/products/${product.id}`}
-            className="flex flex-col aspect-square gap-3"
-          >
-            <div className="h-full grid place-items-center bg-gray-200">
-              <img
-                className="aspect-square w-2/3"
-                src={product.images[0]}
-                alt={product.title}
-              />
-            </div>
-            <div className="text-xs font-light">
-              <div className="flex justify-between items-center">
-                <h3 className="uppercase">{product.title}</h3>
-                <span
-                  className={`w-2 h-2 rounded-full mr-1 ${
-                    product.availabilityStatus === "In Stock"
-                      ? "bg-green-500"
-                      : "bg-orange-500"
-                  }`}
-                  title={
-                    product.availabilityStatus === "In Stock"
-                      ? "In stock"
-                      : "Low Stock"
-                  }
-                ></span>
+        {products
+          .sort(sorting)
+          .slice(page * pageSize, pageSize * (page + 1))
+          .map((product: Product, index: number) => (
+            <Link
+              key={index}
+              to={`/products/${product.id}`}
+              className="flex flex-col aspect-square gap-3"
+            >
+              <div className="h-full grid place-items-center bg-gray-200">
+                <img
+                  className="aspect-square w-2/3"
+                  src={product.images[0]}
+                  alt={product.title}
+                />
               </div>
-              <p>{product.price} €</p>
-            </div>
-          </Link>
-        ))}
+              <div className="text-xs font-light">
+                <div className="flex justify-between items-center">
+                  <h3 className="uppercase">{product.title}</h3>
+                  <span
+                    className={`w-2 h-2 rounded-full mr-1 ${
+                      product.availabilityStatus === "In Stock"
+                        ? "bg-green-500"
+                        : "bg-orange-500"
+                    }`}
+                    title={
+                      product.availabilityStatus === "In Stock"
+                        ? "In stock"
+                        : "Low Stock"
+                    }
+                  ></span>
+                </div>
+                <p>{product.price} €</p>
+              </div>
+            </Link>
+          ))}
       </div>
+      <Pagination
+        totalPages={totalPages}
+        currentPage={page}
+        onPageChange={setPage}
+      />
     </section>
   );
 }
