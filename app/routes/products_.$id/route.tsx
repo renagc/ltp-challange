@@ -36,13 +36,13 @@ export default function ProductDetail() {
               <h1 className="text-sm md:text-xl">{product.title}</h1>
               <h2 className="text-sm md:text-xl">{product.price} €</h2>
             </div>
-            <hr className="border-[0,5px] border-black my-4 w-full h-px hidden md:block" />
             <button
-              className="border border-black w-full py-2 font-light text-xs uppercase"
+              className="border border-black bg-black text-white w-full py-2 font-light text-xs uppercase"
               onClick={() => reducer.addProduct(product)}
             >
               add
             </button>
+            <hr className="border-[0,5px] border-black my-4 w-full h-px hidden md:block" />
           </div>
           <div className="hidden md:block">
             <h3 className="text-sm mb-2">Product Details</h3>

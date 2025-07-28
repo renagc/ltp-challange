@@ -1,10 +1,11 @@
 import { ProductImage } from "~/components/ProductImage";
 import { useCartContext } from "~/hooks/use-cart-context";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function Cart() {
   const { reducer } = useCartContext();
+  const [code, setCode] = useState<string>("");
 
   const subTotal = useMemo(() => {
     const subTotalSum = reducer.state.reduce(
@@ -15,11 +16,11 @@ export default function Cart() {
   }, [reducer.state]);
 
   return (
-    <div className="md:flex pt-20 pb-60 p-4">
-      <ul className="flex flex-col gap-4">
+    <div className="md:flex pt-20 pb-80 md:pb-0 p-4 md:space-x-12">
+      <ul className="flex flex-col gap-4 w-full">
         {reducer.state.map((cartItem, index) => (
           <>
-            <li key={index} className="sm:flex gap-4">
+            <li key={index} className="flex flex-col sm:flex-row gap-4">
               <div className="w-32">
                 <ProductImage
                   src={cartItem.product.images[0]}
@@ -33,7 +34,11 @@ export default function Cart() {
                 </div>
                 <div className="flex gap-4">
                   <div className="flex gap-4 items-center border border-black rounded-lg px-3 py-1 font-light">
-                    <button>-</button>
+                    <button
+                      onClick={() => reducer.decrementProduct(cartItem.product)}
+                    >
+                      -
+                    </button>
                     <h3 className="text-xs">{cartItem.quantity}</h3>
                     <button
                       onClick={() => reducer.addProduct(cartItem.product)}
@@ -41,7 +46,9 @@ export default function Cart() {
                       +
                     </button>
                   </div>
-                  <button>
+                  <button
+                    onClick={() => reducer.removeProduct(cartItem.product)}
+                  >
                     <TrashIcon className="size-5" />
                   </button>
                 </div>
@@ -53,31 +60,51 @@ export default function Cart() {
           </>
         ))}
       </ul>
-      <div className="fixed bottom-0 left-0 right-0 bg-white p-4 w-full md:max-w-lg md:static flex flex-col gap-2 md:justify-center md:gap-12 uppercase font-light">
-        <div className="space-y-4 md:space-y-12">
+      <div className="fixed bottom-0 left-0 right-0 bg-white p-4 w-full md:max-w-lg md:static md:border md:border-black md:rounded-lg md:h-fit flex flex-col gap-2 md:justify-center md:gap-6 uppercase font-light">
+        <div className="space-y-4 md:space-y-6">
           <h1 className="text-sm md:text-xl font-bold">Cart Summary</h1>
           <div className="space-y-1">
-            <div className="flex justify-between text-sm md:text-xl">
+            <div className="flex justify-between text-sm">
               <h2>SubTotal</h2>
               <h2>{subTotal} €</h2>
             </div>
-            <div className="flex justify-between text-sm md:text-xl">
+            <div className="flex justify-between text-sm">
               <h2>Shipping</h2>
-              <h2>Calculation</h2>
+              <h2>20.00 €</h2>
             </div>
-            <div className="flex justify-between text-sm md:text-xl">
+            <div className="flex justify-between text-sm">
               <h2>Total €</h2>
-              <h2>Calculation</h2>
+              <h2>{(Number(subTotal) + 20).toFixed(2)} €</h2>
             </div>
           </div>
-          <hr className="border-[0,5px] border-black my-4 w-full h-px hidden md:block" />
           <button className="border bg-black text-white rounded-lg w-full py-2 font-light text-xs uppercase">
             Buy
           </button>
+          <a
+            href="https://paypal.com"
+            className="text-sm text-center flex justify-center"
+          >
+            Or Pay with paypal
+          </a>
         </div>
-        <div className="hidden md:block">
-          <h3 className="text-sm mb-2">Product Details</h3>
-          <p className="text-sm normal-case">description</p>
+        <div>
+          <hr className="border-[0,5px] border-black my-4 w-full h-px hidden md:block" />
+          <label htmlFor="code" className="block text-sm font-medium mb-1">
+            Promo code
+          </label>
+          <div className="flex gap-4">
+            <input
+              id="code"
+              type="text"
+              placeholder="Enter code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="border rounded-lg px-3 py-1 flex-1 focus:outline-none focus:ring-1 focus:ring-black text-sm"
+            />
+            <button className="bg-black text-white border-black px-3 py-1 rounded-lg text-sm font-light">
+              Apply
+            </button>
+          </div>
         </div>
       </div>
     </div>
