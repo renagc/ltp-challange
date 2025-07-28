@@ -38,7 +38,9 @@ export default function Navbar() {
           <Bars3Icon className="size-6" />
         )}
       </button>
-      <h1 className="uppercase font-bold text-nowrap">The Online Store</h1>
+      <h1 className="uppercase font-extrabold tracking-tight text-nowrap">
+        The Online Store
+      </h1>
       <ul
         className={`fixed top-0 bottom-0 left-0 right-0 w-full h-full z-10 bg-white sm:flex-row sm:static flex justify-center items-center gap-4 sm:gap-4 sm:flex ${
           open ? "flex" : "hidden"
