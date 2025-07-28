@@ -10,11 +10,6 @@ type Navigation = {
 
 const navigation: Navigation[] = [
   {
-    name: "Home",
-    href: "/",
-    current: true,
-  },
-  {
     name: "Products",
     href: "/products",
     current: false,

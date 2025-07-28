@@ -2,6 +2,14 @@ import { Category, type Product } from "~/types/product";
 import { useLoaderData, Link } from "@remix-run/react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Pagination } from "./pagination";
+import type { MetaFunction } from "@remix-run/node";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Ecommerce App" },
+    { name: "description", content: "Welcome!" },
+  ];
+};
 
 export async function loader() {
   const products = await fetch("https://dummyjson.com/products");
