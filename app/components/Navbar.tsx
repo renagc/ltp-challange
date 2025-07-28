@@ -26,7 +26,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="fixed w-full flex justify-between bg-white p-4 dark:bg-black border dark:text-white">
+    <nav className="fixed w-full flex justify-between bg-white p-4 dark:bg-black border dark:text-white z-10">
       <button
         className="sm:hidden z-20"
         onClick={() => setOpen((o) => !o)}
